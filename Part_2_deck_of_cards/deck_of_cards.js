@@ -46,20 +46,31 @@ let count = 0;
 const newDeckURL = "http://deckofcardsapi.com/api/deck/new/shuffle/?deck_count=1";
 let deck = $("#deck");
 
-function shuffleDeck() {
+axios
+    .get(newDeckURL)
+    .then(res => {
+        new_deck_id = res.data.deck_id;
+        console.log(new_deck_id);
+        $("#drawn-card").attr("src", "https://s3.amazonaws.com/images.penguinmagic.com/images/products/original/5075a.jpg");
+        
+    })
+    .catch(err => console.log("Rejected", err));
     
+
+function drawCard() {
+    
+    const newCardURL = `http://deckofcardsapi.com/api/deck/${new_deck_id}/draw/?count=1`;
+
     axios
-        .get(newDeckURL)
+        .get(newCardURL)
         .then(res => {
-            new_deck_id = res.data.deck_id;
-            console.log("deck id: ", new_deck_id);
-            $("#drawn-card").src = "/Part_2_deck_of_cards/static/card-deck.jpeg";
-            
+            console.log(res.data)
+            $("#drawn-card").attr("src", res.data.cards[0].image);
         })
         .catch(err => console.log("Rejected", err));
-
 }
-$("#new-deck").on("click", shuffleDeck);
-// $("#new-card").on("click", drawCard);
+
+
+$("#new-card").on("click", drawCard);
     
 
